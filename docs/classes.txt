@@ -1,0 +1,32 @@
+I have a few ideas on how to go about this, but my previous/default presumption
+was to have 3-5 core attributes, then classes associated with each attribute and
+combination of attributes. Separately I've also been thinking about reducing all
+the equipment systems down to just weapons. If I did that, I'm kind of wondering
+what it would look like (a lot of work) to associate classes with weapons. 
+
+Attributes are probably
+  strength
+  dexterity
+  intelligence
+  faith
+  ???
+
+Weapon types...
+  sword, dagger, bow, hammer/mace, handgun*, spear, fist weapons, shield?,
+  greatsword?, focus/summoning stone/somesuch?, staff, wand, 
+  * - or revolver or something, I just don't mean a long gun
+
+For example:
+  paladins could be the "str + faith, hammer"
+  trapper could be "dex + int bow" 
+
+
+I don't think it would be entirely possible to fill the diagram of every
+variation (certainly not at first), so either we'd start with a subset or reduce
+the number of weapons until the system fit. Also, there would likely be some
+special classes I'd want to add that would only make sense for one weapon/stat
+set (event classes or something similar). 
+
+The other issue becomes differentiating weapon stat/modifier pools while still
+making them big enough to be fun
+

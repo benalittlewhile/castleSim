@@ -1,0 +1,121 @@
+[x] - see if fennecs has any event implementation to build off of
+  - no, but calling events as functions is probably better in the long term,
+    helps keep everything sane and sequenced (probably, until it doesn't)
+
+- in an ecs, keeping logic in systems keeps everything clean
+- one way to do this: model our events as function calls within systems
+  - e.g: main() calls GlobalUpdate() which in sequence calls TickEconomy(),
+    TickDaily(), and TickCombat(). These in turn would call all the systems
+    they need to perform these updates. And because function calls stack,
+    everything runs in a consistent(?) sequence that makes sense
+
+okay, so what do I want to do?
+
+mlaak:
+
+    - dumped into an empty castle square
+    - you build a house, which spawns a family: a parent and a child
+    - the child signs up as an adventurer
+    - the next day you decree a quest, which the child accepts and takes on
+    - the quest is to explore a local dungeon containing a series of encounters,
+      including monsters that must be fought to proceed.
+      - fights take place automatically, they are simulated turn-based
+        encounters a-la final fantasy
+    - upon finishing the dungeon the adventurer returns with a resource reward
+      that allows the king to build more buildings. More houses means more families -> more adventurers -> more quests completed -> repeat.
+    - as you gather more resources you're able to build different buildings
+      - different kinds of shops sell goods to aid your adventurers (weapons,
+        armor, consumables) or enrich your townsfolk (bread, I think there was
+        another)
+      - several facilities to allow your adventurers to enhance themselves,
+        including job training facilites (gambling hall -> thief, brawlers
+        guild -> warrior, etc.)
+      - guild hall tracks the number and properties of sanctioned adventurers
+      - tavern allows adventurers to form parties
+      - inn allows visitors (adventurers or merchants)
+        - could be lovely as a mechanic to borrow units from other people
+
+so... this game needs data structures
+
+I'm a little torn on how to structure the data for the adventurers. I guess the
+easiest thing would be to just add them to the store without... well okay, what
+operations are we going to need to do
+  - creating an adventurer
+    - trivial if we're just creating a new entity and generating component
+      values
+  - running a combat loop on an adventurer
+    - we pull the reference to every character in the specific expedition
+      (working title) when we're first running it, so we don't have to do
+      multiple lookups to determine characters. 
+    - If we concede that you can't change equipment during a fight we can look
+    up each character's equipment as well and store their entities, that way
+    we're not re-querying every time (but like, it would be cool if you could so
+    maybe the lookup expense is worth it, or fennecs could be optimized enough
+    that it's not an issue).
+    - I guess we could have a combat tag with an id that gets added (not yet
+      sure of the utility, but it sounds useful. I guess this would be to allow
+      batched operations to run multiple expeditions in parallel?)
+    - Turn order is determined by a speed attribute
+      - I like the idea that characters can have >100% speed, allowing them to
+        take multiple turns in the order
+      - Because abilities and other effects (buffs/debuffs) could affect this it
+        needs to be recalculated for every character
+          - then the question: recalculate it live or only once at the end of
+          each turn.
+            - live: I'm sure there will be some loop that allows characters to
+            take infinite turns. However this also prevents newly-spawned units
+            from joining combat until the turn after they're summoned
+              - maybe new units can be targeted/effected before the next turn,
+              but cannot act until then?
+            - once/turn: I think it's the only sane option, otherwise there's a
+            chance for infinites. This does however mean that speed boosts are
+            not active/have no benefit until the following turn.
+      - 
+  - 
+
+
+next 3 lines are example formatting for following list:
+Entity
+  Component
+  Component
+
+Player/Town/Castle
+  CurrencyGold <int>
+  CurrencyRuneite <int>
+  // my urge to couple this to the buildings is extreme, but there's no real
+  // reason to do that unless we want the system to run for multiple players at
+  // once
+House
+  position <x,y>
+  rotation <int 1-4 or rather 0-3>
+  dimensions? to prevent collision with others on construction
+Adventurer
+  house <ref House> so we can pull the specific house they below to
+  AttributeStr int
+  AttributeInt int
+  AttributeDex int
+[SomeWeapon]
+  WeaponPropertyDamage int
+  Equippable
+  EquippableWeapon
+  InInventory <ref Adventurer> 
+    // allows query World.query().Has<InInventoryOf>(thisAdventurer)
+    // also allows same as above but equipped or in inventory
+    // or WeaponEquipped and ArmorEquipped 
+
+
+okay, so given that system how do  we do proc effects
+- For each expedition
+  - For each expedition encounter
+     - if combat do combat
+        ! - combats will need sides or some other team identifier
+        - until all entities from one side are dead
+          - loop through all turns in whatever order
+            - 
+
+An ecs works well for this because it allows us to add and remove combatants
+super easily, just create/destroy entities with the appropriate tags and then be
+sure to loop in a way where the turn logic picks them up on the next turn. Does
+fennecs have an order-by? I don't think so from a quick look through the docs,
+but it's fairly easy to just collect all the results from the query then operate
+on them. Wait is that allowed?

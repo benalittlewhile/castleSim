@@ -1,0 +1,34 @@
+{
+  "Themes": [
+    {
+      "Default": {
+        "ColorSchemes": [
+          {
+            "TopLevel": {
+              "Normal": {
+                "Foreground": "BrightGreen",
+                "Background": "Black"
+              },
+              "Focus": {
+                "Foreground": "White",
+                "Background": "Cyan"
+              },
+              "HotNormal": {
+                "Foreground": "Yellow",
+                "Background": "Green"
+              },
+              "HotFocus": {
+                "Foreground": "Blue",
+                "Background": "Red"
+              },
+              "Disabled": {
+                "Foreground": "DarkGray",
+                "Background": "Black"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
